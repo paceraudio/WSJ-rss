@@ -51,7 +51,7 @@ public class RssHeadlinesManager {
                         break;
 
                     case RSS_DOWNLOAD_COMPLETE:
-                        ArrayAdapter<String> arrayAdapter = rssTask.getArrayAdapterWeakReference();
+                        ArrayAdapter<HeadlineItem> arrayAdapter = rssTask.getArrayAdapterWeakReference();
 
                         if (arrayAdapter != null) {
                             arrayAdapter.clear();
@@ -68,7 +68,7 @@ public class RssHeadlinesManager {
         };
     }
 
-    public RssTask downloadRssHeadlines(ProgressBar progressBar, ArrayAdapter<String> arrayAdapter) {
+    public RssTask downloadRssHeadlines(ProgressBar progressBar, ArrayAdapter<HeadlineItem> arrayAdapter) {
         RssTask rssTask = new RssTask(progressBar, arrayAdapter);
         rssTask.beginRssDownload();
         return null;

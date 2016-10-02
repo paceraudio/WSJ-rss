@@ -16,13 +16,13 @@ public class RssTask {
     private RssDownloadRunnable rssDownloadRunnable;
     private Thread executingThread;
 
-    private ArrayList<String> rssHeadlinesArrayList;
+    private ArrayList<HeadlineItem> rssHeadlinesArrayList;
 
     private WeakReference<ListView> listViewWeakReference;
     private WeakReference<ProgressBar> progressBarWeakReference;
-    private WeakReference<ArrayAdapter<String>> arrayAdapterWeakReference;
+    private WeakReference<ArrayAdapter<HeadlineItem>> arrayAdapterWeakReference;
 
-    public RssTask(ProgressBar progressBar, ArrayAdapter<String> arrayAdapter) {
+    public RssTask(ProgressBar progressBar, ArrayAdapter<HeadlineItem> arrayAdapter) {
         rssDownloadRunnable = new RssDownloadRunnable(this);
         progressBarWeakReference = new WeakReference<>(progressBar);
         arrayAdapterWeakReference = new WeakReference<>(arrayAdapter);
@@ -42,18 +42,18 @@ public class RssTask {
         return null;
     }
 
-    public ArrayAdapter<String> getArrayAdapterWeakReference() {
+    public ArrayAdapter<HeadlineItem> getArrayAdapterWeakReference() {
         if (arrayAdapterWeakReference != null) {
             return arrayAdapterWeakReference.get();
         }
         return null;
     }
 
-    public ArrayList<String> getRssHeadlinesArrayList() {
+    public ArrayList<HeadlineItem> getRssHeadlinesArrayList() {
         return rssHeadlinesArrayList;
     }
 
-    public void setRssHeadlinesArrayList(ArrayList<String> rssHeadlinesArrayList) {
+    public void setRssHeadlinesArrayList(ArrayList<HeadlineItem> rssHeadlinesArrayList) {
         this.rssHeadlinesArrayList = rssHeadlinesArrayList;
     }
 
