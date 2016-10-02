@@ -3,20 +3,20 @@ package com.pacerapps.wsjrss;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.pacerapps.wsjrss.rss_download.RssHeadlinesManager;
-import com.pacerapps.wsjrss.rss_download.RssTask;
+
+import static com.pacerapps.wsjrss.util.Constants.*;
 
 public class RssActivity extends AppCompatActivity {
 
-    RssActivityFragment rssActivityFragment;
+    //RssHeadlinesFragment rssHeadlinesFragment;
     RssHeadlinesManager rssHeadlinesManager;
 
     @Override
@@ -30,9 +30,17 @@ public class RssActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RssHeadlinesManager.getInstance().downloadRssHeadlines();
-                Snackbar.make(view, R.string.refreshing_feeds, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Log.d(TAG, "onClick: FAB clicked!!!");
+
+                RssHeadlinesFragment fragment = (RssHeadlinesFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_rss_headlines);
+                if (fragment != null && fragment.isVisible()) {
+
+                    //RssHeadlinesManager.getInstance().downloadRssHeadlines(rssHeadlinesFragment.getDownloadingProgressBar(), rssHeadlinesFragment.getRssArrayAdapter());
+                    fragment.downloadHeadlines();
+                    Snackbar.make(view, R.string.refreshing_feeds, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+
             }
         });
     }

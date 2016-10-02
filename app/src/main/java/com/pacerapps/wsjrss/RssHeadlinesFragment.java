@@ -9,21 +9,35 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+
+import com.pacerapps.wsjrss.rss_download.RssHeadlinesManager;
 
 import java.util.ArrayList;
+
+import static com.pacerapps.wsjrss.util.Constants.TAG;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class RssActivityFragment extends Fragment implements AdapterView.OnItemClickListener{
+public class RssHeadlinesFragment extends Fragment implements AdapterView.OnItemClickListener{
 
     private ListView rssListView;
-    private ArrayAdapter rssArrayAdapter;
+    private ArrayAdapter<String> rssArrayAdapter;
+    private ProgressBar downloadingProgressBar;
 
     String fake = " f a k e ";
-    public static final String TAG = RssActivityFragment.class.getSimpleName();
 
-    public RssActivityFragment() {
+
+    public RssHeadlinesFragment() {
+    }
+
+    public ArrayAdapter<String> getRssArrayAdapter() {
+        return rssArrayAdapter;
+    }
+
+    public ProgressBar getDownloadingProgressBar() {
+        return downloadingProgressBar;
     }
 
     @Override
@@ -35,6 +49,7 @@ public class RssActivityFragment extends Fragment implements AdapterView.OnItemC
     @Override
     public void onStart() {
         super.onStart();
+        downloadingProgressBar = (ProgressBar) getActivity().findViewById(R.id.progress_bar_downloading);
         rssListView = (ListView) getActivity().findViewById(R.id.list_view_rss);
         rssArrayAdapter = new ArrayAdapter(getContext(), R.layout.rss_list_item, R.id.text_view_rss_item);
         rssListView.setAdapter(rssArrayAdapter);
@@ -45,7 +60,7 @@ public class RssActivityFragment extends Fragment implements AdapterView.OnItemC
     @Override
     public void onResume() {
         super.onResume();
-        populateRssListView();
+        populateRssListViewWithFakeData();
     }
 
     @Override
@@ -53,7 +68,7 @@ public class RssActivityFragment extends Fragment implements AdapterView.OnItemC
         Log.d(TAG, "onItemClick: " + position);
     }
 
-    public void populateRssListView() {
+    public void populateRssListViewWithFakeData() {
         ArrayList<String> standIn = new ArrayList<>();
         standIn.add("Hjjpigs run wild!!!!");
         standIn.add("We don't know what to do!!!!");
@@ -62,7 +77,8 @@ public class RssActivityFragment extends Fragment implements AdapterView.OnItemC
         rssArrayAdapter.notifyDataSetChanged();
     }
 
-    public void launchRssTask() {
-
+    public void downloadHeadlines() {
+        RssHeadlinesManager rssHeadlinesManager = RssHeadlinesManager.getInstance();
+        rssHeadlinesManager.downloadRssHeadlines(downloadingProgressBar, rssArrayAdapter);
     }
 }

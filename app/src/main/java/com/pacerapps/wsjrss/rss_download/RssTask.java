@@ -13,16 +13,19 @@ import java.util.ArrayList;
 
 public class RssTask {
 
-    RssDownloadRunnable rssDownloadRunnable;
+    private RssDownloadRunnable rssDownloadRunnable;
+    private Thread executingThread;
 
-    ArrayList<String> rssHeadlinesArrayList;
+    private ArrayList<String> rssHeadlinesArrayList;
 
-    WeakReference<ListView> listViewWeakReference;
-    WeakReference<ProgressBar> progressBarWeakReference;
-    WeakReference<ArrayAdapter<String>> arrayAdapterWeakReference;
+    private WeakReference<ListView> listViewWeakReference;
+    private WeakReference<ProgressBar> progressBarWeakReference;
+    private WeakReference<ArrayAdapter<String>> arrayAdapterWeakReference;
 
-    public RssTask() {
+    public RssTask(ProgressBar progressBar, ArrayAdapter<String> arrayAdapter) {
         rssDownloadRunnable = new RssDownloadRunnable(this);
+        progressBarWeakReference = new WeakReference<>(progressBar);
+        arrayAdapterWeakReference = new WeakReference<>(arrayAdapter);
     }
 
     public ListView getListViewWeakReference() {
@@ -52,5 +55,16 @@ public class RssTask {
 
     public void setRssHeadlinesArrayList(ArrayList<String> rssHeadlinesArrayList) {
         this.rssHeadlinesArrayList = rssHeadlinesArrayList;
+    }
+
+    public void beginRssDownload() {
+        Thread thread = new Thread(rssDownloadRunnable);
+        executingThread = thread;
+        thread.start();
+    }
+
+    public void handleDownloadState(int state) {
+        RssHeadlinesManager manager = RssHeadlinesManager.getInstance();
+        manager.handleDownloadState(this, state);
     }
 }
