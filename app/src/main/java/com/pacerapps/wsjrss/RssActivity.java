@@ -11,9 +11,13 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.pacerapps.wsjrss.rss_download.RssHeadlinesManager;
+import com.pacerapps.wsjrss.rss_download.RssTask;
+
 public class RssActivity extends AppCompatActivity {
 
     RssActivityFragment rssActivityFragment;
+    RssHeadlinesManager rssHeadlinesManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,7 @@ public class RssActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                RssHeadlinesManager.getInstance().downloadRssHeadlines();
                 Snackbar.make(view, R.string.refreshing_feeds, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }

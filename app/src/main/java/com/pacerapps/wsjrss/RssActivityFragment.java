@@ -18,7 +18,9 @@ import java.util.ArrayList;
 public class RssActivityFragment extends Fragment implements AdapterView.OnItemClickListener{
 
     private ListView rssListView;
-    private RssListAdapter rssListAdapter;
+    private ArrayAdapter rssArrayAdapter;
+
+    String fake = " f a k e ";
     public static final String TAG = RssActivityFragment.class.getSimpleName();
 
     public RssActivityFragment() {
@@ -34,10 +36,10 @@ public class RssActivityFragment extends Fragment implements AdapterView.OnItemC
     public void onStart() {
         super.onStart();
         rssListView = (ListView) getActivity().findViewById(R.id.list_view_rss);
-        rssListAdapter = new RssListAdapter(getContext(), R.layout.rss_list_item, R.id.text_view_rss_item);
-        rssListView.setAdapter(rssListAdapter);
+        rssArrayAdapter = new ArrayAdapter(getContext(), R.layout.rss_list_item, R.id.text_view_rss_item);
+        rssListView.setAdapter(rssArrayAdapter);
         rssListView.setOnItemClickListener(this);
-        String fake = " f a k e ";
+
     }
 
     @Override
@@ -52,10 +54,15 @@ public class RssActivityFragment extends Fragment implements AdapterView.OnItemC
     }
 
     public void populateRssListView() {
-        ArrayList<String> standIn = new ArrayList<String>();
+        ArrayList<String> standIn = new ArrayList<>();
         standIn.add("Hjjpigs run wild!!!!");
         standIn.add("We don't know what to do!!!!");
-        rssListAdapter.addAll(standIn);
-        rssListAdapter.notifyDataSetChanged();
+        standIn.add(fake);
+        rssArrayAdapter.addAll(standIn);
+        rssArrayAdapter.notifyDataSetChanged();
+    }
+
+    public void launchRssTask() {
+
     }
 }
