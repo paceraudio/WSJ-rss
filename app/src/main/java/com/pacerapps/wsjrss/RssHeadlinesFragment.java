@@ -22,9 +22,12 @@ import static com.pacerapps.wsjrss.util.Constants.TAG;
  */
 public class RssHeadlinesFragment extends Fragment implements AdapterView.OnItemClickListener{
 
+    public static final String RSS_HEADLINES_KEY = "rssHeadlines";
     private ListView rssListView;
     private ArrayAdapter<String> rssArrayAdapter;
     private ProgressBar downloadingProgressBar;
+
+    private ArrayList<String> savedAdapterContents;
 
     String fake = " f a k e ";
 
@@ -43,6 +46,11 @@ public class RssHeadlinesFragment extends Fragment implements AdapterView.OnItem
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        if (savedInstanceState != null) {
+            savedAdapterContents = savedInstanceState.getStringArrayList(RSS_HEADLINES_KEY);
+
+        }
         return inflater.inflate(R.layout.fragment_rss, container, false);
     }
 
@@ -51,7 +59,7 @@ public class RssHeadlinesFragment extends Fragment implements AdapterView.OnItem
         super.onStart();
         downloadingProgressBar = (ProgressBar) getActivity().findViewById(R.id.progress_bar_downloading);
         rssListView = (ListView) getActivity().findViewById(R.id.list_view_rss);
-        rssArrayAdapter = new ArrayAdapter(getContext(), R.layout.rss_list_item, R.id.text_view_rss_item);
+        rssArrayAdapter = new ArrayAdapter<>(getContext(), R.layout.rss_list_item, R.id.text_view_rss_item);
         rssListView.setAdapter(rssArrayAdapter);
         rssListView.setOnItemClickListener(this);
 
@@ -60,12 +68,18 @@ public class RssHeadlinesFragment extends Fragment implements AdapterView.OnItem
     @Override
     public void onResume() {
         super.onResume();
-        populateRssListViewWithFakeData();
+        populateListViewWithSavedContents();
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d(TAG, "onItemClick: " + position);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArrayList(RSS_HEADLINES_KEY, obtainAdapterContents(rssArrayAdapter));
     }
 
     public void populateRssListViewWithFakeData() {
@@ -80,5 +94,21 @@ public class RssHeadlinesFragment extends Fragment implements AdapterView.OnItem
     public void downloadHeadlines() {
         RssHeadlinesManager rssHeadlinesManager = RssHeadlinesManager.getInstance();
         rssHeadlinesManager.downloadRssHeadlines(downloadingProgressBar, rssArrayAdapter);
+    }
+
+    private ArrayList<String> obtainAdapterContents(ArrayAdapter<String> arrayAdapter) {
+        int count = arrayAdapter.getCount();
+        ArrayList<String> itemsToSave = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            itemsToSave.add(arrayAdapter.getItem(i));
+        }
+        return itemsToSave;
+    }
+
+    private void populateListViewWithSavedContents() {
+        if (savedAdapterContents != null) {
+            rssArrayAdapter.addAll(savedAdapterContents);
+            rssArrayAdapter.notifyDataSetChanged();
+        }
     }
 }
