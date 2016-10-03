@@ -107,26 +107,18 @@ public class HeadlineItemAdapter extends BaseAdapter {
     }
 
     private synchronized int findInsertionIndex(int category) {
-        int lesserCategory = -1; // outside of the bounds of the category range
         int insertionIndex = 0;
-        //int totalSize = 0;
 
         if (!orderingHashMap.isEmpty() && category != 0) {
 
             for (int i : orderingHashMap.keySet()) {
 
                 if (i < category) {
+                    // get the amount of headlines (plus the category "header") under that category
                     insertionIndex += orderingHashMap.get(i);
-                    if (i > lesserCategory) {
-                        lesserCategory = i;
-                    }
                 }
             }
-            //insertionIndex = totalSize;
         }
-        Log.d(TAG, "findInsertionIndex: category to insert: " + category);
-        Log.d(TAG, "findInsertionIndex: preceding category: " + lesserCategory);
-        Log.d(TAG, "findInsertionIndex: insertion index: " + insertionIndex);
 
         return insertionIndex;
     }
