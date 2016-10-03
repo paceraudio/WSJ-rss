@@ -6,18 +6,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-import com.pacerapps.wsjrss.rss_download.RssHeadlinesManager;
-
-import static com.pacerapps.wsjrss.util.Constants.*;
+import static com.pacerapps.wsjrss.util.Constants.TAG;
 
 public class RssActivity extends AppCompatActivity {
 
-    //RssHeadlinesFragment rssHeadlinesFragment;
-    RssHeadlinesManager rssHeadlinesManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +31,8 @@ public class RssActivity extends AppCompatActivity {
                 RssHeadlinesFragment fragment = (RssHeadlinesFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_rss_headlines);
                 if (fragment != null && fragment.isVisible()) {
 
-                    //RssHeadlinesManager.getInstance().downloadRssHeadlines(rssHeadlinesFragment.getDownloadingProgressBar(), rssHeadlinesFragment.getRssArrayAdapter());
                     fragment.downloadHeadlines();
-                    Snackbar.make(view, R.string.refreshing_feeds, Snackbar.LENGTH_LONG)
+                    Snackbar.make(view, R.string.refreshing_feeds, Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();
                 }
 
@@ -48,9 +43,7 @@ public class RssActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        /*FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.*/
+
     }
 
     @Override

@@ -27,10 +27,4 @@ public class Constants {
     public static final String TECHNOLOGY_URL = "http://www.wsj.com/xml/rss/3_7455.xml";
     public static final String LIFESTYLE_URL = "http://www.wsj.com/xml/rss/3_7201.xml";
 
-    /*Opinion
-    World News
-    U.S. Business
-    Markets News
-    Technology: What's News
-    Lifestyle*/
 }

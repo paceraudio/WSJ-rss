@@ -1,6 +1,5 @@
 package com.pacerapps.wsjrss.rss_download;
 
-import android.util.Log;
 import android.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -13,7 +12,6 @@ import java.util.ArrayList;
 import static com.pacerapps.wsjrss.util.Constants.LIFESTYLE;
 import static com.pacerapps.wsjrss.util.Constants.MARKETS_NEWS;
 import static com.pacerapps.wsjrss.util.Constants.OPINION;
-import static com.pacerapps.wsjrss.util.Constants.TAG;
 import static com.pacerapps.wsjrss.util.Constants.TECHNOLOGY;
 import static com.pacerapps.wsjrss.util.Constants.U_S_BUSINESS;
 import static com.pacerapps.wsjrss.util.Constants.WORLD_NEWS;
@@ -44,7 +42,6 @@ public class WsjXmlParser {
                 continue;
             }
             String name = parser.getName();
-            //Log.d(TAG, "readFeed: xml name: " + name);
             // Starts by looking for the channel tag
             if (name.equals("channel")) {
                 headlineItems = readChannel(parser, itemType);
@@ -69,7 +66,6 @@ public class WsjXmlParser {
                 continue;
             }
             String name = parser.getName();
-            //Log.d(TAG, "readFeed: xml name: " + name);
             // Starts by looking for the item tag
             if (name.equals("item")) {
                 headlineItems.add(readItem(parser, itemType));
@@ -83,8 +79,6 @@ public class WsjXmlParser {
     private HeadlineItem readItem(XmlPullParser parser, int itemType) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, nameSpace, "item");
         String title = null;
-        //String summary = null;
-        //String link = null;
         HeadlineItem headlineItem = new HeadlineItem(true);
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {

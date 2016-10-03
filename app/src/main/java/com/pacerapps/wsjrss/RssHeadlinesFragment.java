@@ -36,10 +36,6 @@ public class RssHeadlinesFragment extends Fragment implements AdapterView.OnItem
     }
 
 
-    public ProgressBar getDownloadingProgressBar() {
-        return downloadingProgressBar;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

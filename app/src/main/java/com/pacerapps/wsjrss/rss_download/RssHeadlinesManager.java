@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 
 import com.pacerapps.wsjrss.adapter.HeadlineItemAdapter;
@@ -15,7 +14,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static com.pacerapps.wsjrss.util.Constants.*;
+import static com.pacerapps.wsjrss.util.Constants.LIFESTYLE;
+import static com.pacerapps.wsjrss.util.Constants.MARKETS_NEWS;
+import static com.pacerapps.wsjrss.util.Constants.OPINION;
+import static com.pacerapps.wsjrss.util.Constants.RSS_DOWNLOAD_COMPLETE;
+import static com.pacerapps.wsjrss.util.Constants.RSS_DOWNLOAD_STARTED;
+import static com.pacerapps.wsjrss.util.Constants.TECHNOLOGY;
+import static com.pacerapps.wsjrss.util.Constants.U_S_BUSINESS;
+import static com.pacerapps.wsjrss.util.Constants.WORLD_NEWS;
 
 /**
  * Created by jeffwconaway on 10/1/16.
@@ -35,7 +41,6 @@ public class RssHeadlinesManager {
 
     int[] headlineTypesArray = {OPINION, WORLD_NEWS, U_S_BUSINESS, MARKETS_NEWS, TECHNOLOGY, LIFESTYLE};
 
-    //RssTask rssTask;
 
     private RssHeadlinesManager() {
         initHandler();
@@ -74,17 +79,14 @@ public class RssHeadlinesManager {
                         HeadlineItemAdapter adapter = rssTask.getHeadlineItemAdapterWeakReference();
 
                         if (adapter != null) {
-                            //adapter.getHeadlineItems().clear();
-                            //adapter.getHeadlineItems().addAll(rssTask.getRssHeadlinesArrayList());
-                            //adapter.notifyDataSetChanged();
                             adapter.addItemsToAdapter(rssTask.getRssHeadlinesArrayList());
                         }
+
                         if (progressBar != null) {
                             progressBar.setVisibility(View.INVISIBLE);
                         }
                         break;
                 }
-
             }
         };
     }
