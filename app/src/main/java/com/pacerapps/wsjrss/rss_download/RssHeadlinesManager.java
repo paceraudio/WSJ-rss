@@ -6,9 +6,9 @@ import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
+
+import com.pacerapps.wsjrss.adapter.HeadlineItemAdapter;
 
 import static com.pacerapps.wsjrss.util.Constants.*;
 
@@ -51,12 +51,12 @@ public class RssHeadlinesManager {
                         break;
 
                     case RSS_DOWNLOAD_COMPLETE:
-                        ArrayAdapter<HeadlineItem> arrayAdapter = rssTask.getArrayAdapterWeakReference();
+                        HeadlineItemAdapter adapter = rssTask.getHeadlineItemAdapterWeakReference();
 
-                        if (arrayAdapter != null) {
-                            arrayAdapter.clear();
-                            arrayAdapter.addAll(rssTask.getRssHeadlinesArrayList());
-                            arrayAdapter.notifyDataSetChanged();
+                        if (adapter != null) {
+                            adapter.getHeadlineItems().clear();
+                            adapter.getHeadlineItems().addAll(rssTask.getRssHeadlinesArrayList());
+                            adapter.notifyDataSetChanged();
                         }
                         if (progressBar != null) {
                             progressBar.setVisibility(View.INVISIBLE);
@@ -68,8 +68,8 @@ public class RssHeadlinesManager {
         };
     }
 
-    public RssTask downloadRssHeadlines(ProgressBar progressBar, ArrayAdapter<HeadlineItem> arrayAdapter) {
-        RssTask rssTask = new RssTask(progressBar, arrayAdapter);
+    public RssTask downloadRssHeadlines(ProgressBar progressBar, HeadlineItemAdapter adapter /*ArrayAdapter<HeadlineItem> arrayAdapter*/) {
+        RssTask rssTask = new RssTask(progressBar, adapter);
         rssTask.beginRssDownload();
         return null;
     }

@@ -1,17 +1,16 @@
 package com.pacerapps.wsjrss;
 
-import android.os.Parcel;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.pacerapps.wsjrss.adapter.HeadlineItemAdapter;
 import com.pacerapps.wsjrss.rss_download.HeadlineItem;
 import com.pacerapps.wsjrss.rss_download.RssHeadlinesManager;
 
@@ -25,21 +24,17 @@ import static com.pacerapps.wsjrss.util.Constants.TAG;
 public class RssHeadlinesFragment extends Fragment implements AdapterView.OnItemClickListener{
 
     public static final String RSS_HEADLINES_KEY = "rssHeadlines";
+
     private ListView rssListView;
-    private ArrayAdapter<HeadlineItem> rssArrayAdapter;
+    private HeadlineItemAdapter headlineItemAdapter;
     private ProgressBar downloadingProgressBar;
 
     private ArrayList<HeadlineItem> savedAdapterContents;
-
-    String fake = " f a k e ";
 
 
     public RssHeadlinesFragment() {
     }
 
-    public ArrayAdapter<HeadlineItem> getRssArrayAdapter() {
-        return rssArrayAdapter;
-    }
 
     public ProgressBar getDownloadingProgressBar() {
         return downloadingProgressBar;
@@ -61,10 +56,9 @@ public class RssHeadlinesFragment extends Fragment implements AdapterView.OnItem
         super.onStart();
         downloadingProgressBar = (ProgressBar) getActivity().findViewById(R.id.progress_bar_downloading);
         rssListView = (ListView) getActivity().findViewById(R.id.list_view_rss);
-        rssArrayAdapter = new ArrayAdapter<>(getContext(), R.layout.rss_list_item, R.id.text_view_rss_item);
-        rssListView.setAdapter(rssArrayAdapter);
+        headlineItemAdapter = new HeadlineItemAdapter(getContext());
+        rssListView.setAdapter(headlineItemAdapter);
         rssListView.setOnItemClickListener(this);
-
     }
 
     @Override
@@ -81,38 +75,19 @@ public class RssHeadlinesFragment extends Fragment implements AdapterView.OnItem
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(RSS_HEADLINES_KEY, obtainAdapterContents(rssArrayAdapter));
+        outState.putParcelableArrayList(RSS_HEADLINES_KEY, headlineItemAdapter.getHeadlineItems());
     }
 
-    /*public void populateRssListViewWithFakeData() {
-        ArrayList<String> standIn = new ArrayList<>();
-        standIn.add("Hjjpigs run wild!!!!");
-        standIn.add("We don't know what to do!!!!");
-        standIn.add(fake);
-        rssArrayAdapter.addAll(standIn);
-        rssArrayAdapter.notifyDataSetChanged();
-    }*/
 
     public void downloadHeadlines() {
         RssHeadlinesManager rssHeadlinesManager = RssHeadlinesManager.getInstance();
-        rssHeadlinesManager.downloadRssHeadlines(downloadingProgressBar, rssArrayAdapter);
-    }
-
-    private ArrayList<HeadlineItem> obtainAdapterContents(ArrayAdapter<HeadlineItem> arrayAdapter) {
-        int count = arrayAdapter.getCount();
-        ArrayList<HeadlineItem> itemsToSave = new ArrayList<>();
-        HeadlineItem headlineItem;
-        for (int i = 0; i < count; i++) {
-            //headlineItem = arrayAdapter.getItem(i);
-            itemsToSave.add(arrayAdapter.getItem(i));
-        }
-        return itemsToSave;
+        rssHeadlinesManager.downloadRssHeadlines(downloadingProgressBar, headlineItemAdapter);
     }
 
     private void populateListViewWithSavedContents() {
         if (savedAdapterContents != null) {
-            rssArrayAdapter.addAll(savedAdapterContents);
-            rssArrayAdapter.notifyDataSetChanged();
+            headlineItemAdapter.setHeadlineItems(savedAdapterContents);
+            headlineItemAdapter.notifyDataSetChanged();
         }
     }
 }

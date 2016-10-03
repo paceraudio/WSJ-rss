@@ -4,6 +4,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.pacerapps.wsjrss.adapter.HeadlineItemAdapter;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -20,12 +22,12 @@ public class RssTask {
 
     private WeakReference<ListView> listViewWeakReference;
     private WeakReference<ProgressBar> progressBarWeakReference;
-    private WeakReference<ArrayAdapter<HeadlineItem>> arrayAdapterWeakReference;
+    private WeakReference<HeadlineItemAdapter> headlineItemAdapterWeakReference;
 
-    public RssTask(ProgressBar progressBar, ArrayAdapter<HeadlineItem> arrayAdapter) {
+    public RssTask(ProgressBar progressBar, HeadlineItemAdapter adapter) {
         rssDownloadRunnable = new RssDownloadRunnable(this);
         progressBarWeakReference = new WeakReference<>(progressBar);
-        arrayAdapterWeakReference = new WeakReference<>(arrayAdapter);
+        headlineItemAdapterWeakReference = new WeakReference<>(adapter);
     }
 
     public ListView getListViewWeakReference() {
@@ -42,9 +44,9 @@ public class RssTask {
         return null;
     }
 
-    public ArrayAdapter<HeadlineItem> getArrayAdapterWeakReference() {
-        if (arrayAdapterWeakReference != null) {
-            return arrayAdapterWeakReference.get();
+    public HeadlineItemAdapter getHeadlineItemAdapterWeakReference() {
+        if (headlineItemAdapterWeakReference != null) {
+            return headlineItemAdapterWeakReference.get();
         }
         return null;
     }

@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.pacerapps.wsjrss.util.Constants;
 
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,6 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.pacerapps.wsjrss.util.Constants.*;
 
@@ -55,7 +58,9 @@ public class RssDownloadRunnable implements Runnable {
 
         try {
             ArrayList<HeadlineItem> headlineItems = downloadRssHeadlines(OPINION);
-            rssTask.setRssHeadlinesArrayList(headlineItems);
+            if (headlineItems != null) {
+                rssTask.setRssHeadlinesArrayList(headlineItems);
+            }
             rssTask.handleDownloadState(RSS_DOWNLOAD_COMPLETE);
         } catch (IOException e) {
             Log.e(TAG, "RssDownloadRunnable run: ", e);
@@ -65,6 +70,7 @@ public class RssDownloadRunnable implements Runnable {
 
     private ArrayList<HeadlineItem> downloadRssHeadlines(int headlineType) throws IOException {
         InputStream inputStream = null;
+        ArrayList<HeadlineItem> headlineItems = null;
 
         try {
             URL url = obtainUrlByType(headlineType);
@@ -77,14 +83,26 @@ public class RssDownloadRunnable implements Runnable {
             int response = connection.getResponseCode();
             Log.d(TAG, "downloadRssHeadlines: response code: " + response);
             inputStream = connection.getInputStream();
-            String inputStr = inputStreamToString(inputStream, 1000);
-            Log.d(TAG, "downloadRssHeadlines: " + inputStr);
+            //String inputStr = inputStreamToString(inputStream, 100000);
+            //Log.d(TAG, "downloadRssHeadlines: " + inputStr);
+            WsjXmlParser parser = new WsjXmlParser();
+
+            try {
+                 headlineItems = parser.parseRssXml(inputStream, headlineType);
+                for (HeadlineItem item : headlineItems) {
+                    Log.d(TAG, "downloadRssHeadlines: headline: " + item.getHeadline());
+                }
+                Log.d(TAG, "downloadRssHeadlines: headlineItems: " );
+            } catch (XmlPullParserException e) {
+                Log.e(TAG, "downloadRssHeadlines: ", e);
+            }
+
         } finally {
             if (inputStream != null) {
                 inputStream.close();
             }
         }
-        return new ArrayList<>();
+        return headlineItems;
     }
 
     private URL obtainUrlByType(int headlineType) throws MalformedURLException {
