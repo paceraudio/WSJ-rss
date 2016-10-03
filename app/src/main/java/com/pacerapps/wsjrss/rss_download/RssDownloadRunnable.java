@@ -57,7 +57,7 @@ public class RssDownloadRunnable implements Runnable {
         rssTask.handleDownloadState(RSS_DOWNLOAD_STARTED);
 
         try {
-            ArrayList<HeadlineItem> headlineItems = downloadRssHeadlines(OPINION);
+            ArrayList<HeadlineItem> headlineItems = downloadRssHeadlines(rssTask.getHeadlineType());
             if (headlineItems != null) {
                 rssTask.setRssHeadlinesArrayList(headlineItems);
             }
@@ -89,10 +89,10 @@ public class RssDownloadRunnable implements Runnable {
 
             try {
                  headlineItems = parser.parseRssXml(inputStream, headlineType);
-                for (HeadlineItem item : headlineItems) {
+                /*for (HeadlineItem item : headlineItems) {
                     Log.d(TAG, "downloadRssHeadlines: headline: " + item.getHeadline());
                 }
-                Log.d(TAG, "downloadRssHeadlines: headlineItems: " );
+                Log.d(TAG, "downloadRssHeadlines: headlineItems: " );*/
             } catch (XmlPullParserException e) {
                 Log.e(TAG, "downloadRssHeadlines: ", e);
             }
@@ -111,7 +111,20 @@ public class RssDownloadRunnable implements Runnable {
             case 0:
                 urlStr = Constants.OPINION_URL;
                 break;
-
+            case 1:
+                urlStr = Constants.WORLD_NEWS_URL;
+                break;
+            case 2:
+                urlStr = Constants.U_S_BUSINESS_URL;
+                break;
+            case 3:
+                urlStr = Constants.MARKET_NEWS_URL;
+                break;
+            case 4:
+                urlStr = Constants.TECHNOLOGY_URL;
+                break;
+            case 5:
+                urlStr = Constants.LIFESTYLE_URL;
         }
         return new URL(urlStr);
     }

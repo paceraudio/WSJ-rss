@@ -10,6 +10,11 @@ import android.widget.ProgressBar;
 
 import com.pacerapps.wsjrss.adapter.HeadlineItemAdapter;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import static com.pacerapps.wsjrss.util.Constants.*;
 
 /**
@@ -21,10 +26,21 @@ public class RssHeadlinesManager {
     Handler uiHandler;
 
     private static RssHeadlinesManager instance;
+
+    private final BlockingQueue<Runnable> headlineDownloadQueue;
+    private static final int KEEP_THREAD_ALIVE = 2;
+    private static final TimeUnit KEEP_THREAD_ALIVE_UNIT = TimeUnit.SECONDS;
+    private static final int CORES = Runtime.getRuntime().availableProcessors();
+    ThreadPoolExecutor executor;
+
+    int[] headlineTypesArray = {OPINION, WORLD_NEWS, U_S_BUSINESS, MARKETS_NEWS, TECHNOLOGY, LIFESTYLE};
+
     //RssTask rssTask;
 
     private RssHeadlinesManager() {
         initHandler();
+        headlineDownloadQueue = new LinkedBlockingQueue<>();
+        initExecutor();
     }
 
     public static RssHeadlinesManager getInstance() {
@@ -32,6 +48,10 @@ public class RssHeadlinesManager {
             instance = new RssHeadlinesManager();
         }
         return instance;
+    }
+
+    private void initExecutor() {
+        executor = new ThreadPoolExecutor(CORES, CORES, KEEP_THREAD_ALIVE, KEEP_THREAD_ALIVE_UNIT, headlineDownloadQueue);
     }
 
     private void initHandler() {
@@ -54,9 +74,10 @@ public class RssHeadlinesManager {
                         HeadlineItemAdapter adapter = rssTask.getHeadlineItemAdapterWeakReference();
 
                         if (adapter != null) {
-                            adapter.getHeadlineItems().clear();
-                            adapter.getHeadlineItems().addAll(rssTask.getRssHeadlinesArrayList());
-                            adapter.notifyDataSetChanged();
+                            //adapter.getHeadlineItems().clear();
+                            //adapter.getHeadlineItems().addAll(rssTask.getRssHeadlinesArrayList());
+                            //adapter.notifyDataSetChanged();
+                            adapter.addItemsToAdapter(rssTask.getRssHeadlinesArrayList());
                         }
                         if (progressBar != null) {
                             progressBar.setVisibility(View.INVISIBLE);
@@ -68,9 +89,12 @@ public class RssHeadlinesManager {
         };
     }
 
-    public RssTask downloadRssHeadlines(ProgressBar progressBar, HeadlineItemAdapter adapter /*ArrayAdapter<HeadlineItem> arrayAdapter*/) {
-        RssTask rssTask = new RssTask(progressBar, adapter);
-        rssTask.beginRssDownload();
+    public RssTask downloadRssHeadlines(ProgressBar progressBar, HeadlineItemAdapter adapter) {
+        for (int type : headlineTypesArray) {
+            RssTask rssTask = new RssTask(progressBar, adapter, type);
+            executor.execute(rssTask.getRssDownloadRunnable());
+        }
+
         return null;
     }
 

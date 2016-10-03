@@ -16,10 +16,18 @@ public class HeadlineItem implements Parcelable {
     private int headlineType;
     private int headlineOrder;
     private String headline;
+
+    // value for separating category items from headlines
+    private boolean isHeadline;
+
     String description;
 
-    public HeadlineItem() {
+    public HeadlineItem(boolean isHeadline) {
+        this.isHeadline = isHeadline;
+    }
 
+    public boolean isHeadline() {
+        return isHeadline;
     }
 
     public int getHeadlineType() {

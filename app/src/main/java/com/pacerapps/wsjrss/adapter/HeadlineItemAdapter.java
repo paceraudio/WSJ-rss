@@ -1,6 +1,7 @@
 package com.pacerapps.wsjrss.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,9 +59,26 @@ public class HeadlineItemAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.rss_list_item, parent, false);
         }
 
-        TextView songTextView = (TextView) convertView.findViewById(R.id.text_view_rss_item);
-        songTextView.setText(headlineItem.getHeadline());
+        TextView headlineTextView = (TextView) convertView.findViewById(R.id.text_view_rss_item);
+        headlineTextView.setText(headlineItem.getHeadline());
+        if (!headlineItem.isHeadline()) {
+            headlineTextView.setTextSize(24);
+            headlineTextView.setTypeface(Typeface.DEFAULT, Typeface.BOLD_ITALIC);
+        } else {
+            headlineTextView.setTextSize(16);
+            headlineTextView.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
+        }
 
         return convertView;
+    }
+
+    public synchronized void clearAdapter() {
+        headlineItems.clear();
+        notifyDataSetChanged();
+    }
+
+    public synchronized void addItemsToAdapter(ArrayList<HeadlineItem> items) {
+        headlineItems.addAll(items);
+        notifyDataSetChanged();
     }
 }

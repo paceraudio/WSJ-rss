@@ -23,12 +23,23 @@ public class RssTask {
     private WeakReference<ListView> listViewWeakReference;
     private WeakReference<ProgressBar> progressBarWeakReference;
     private WeakReference<HeadlineItemAdapter> headlineItemAdapterWeakReference;
+    private int headlineType;
 
-    public RssTask(ProgressBar progressBar, HeadlineItemAdapter adapter) {
+    public RssTask(ProgressBar progressBar, HeadlineItemAdapter adapter, int headlineType) {
         rssDownloadRunnable = new RssDownloadRunnable(this);
         progressBarWeakReference = new WeakReference<>(progressBar);
         headlineItemAdapterWeakReference = new WeakReference<>(adapter);
+        this.headlineType = headlineType;
     }
+
+    public int getHeadlineType() {
+        return headlineType;
+    }
+
+    public RssDownloadRunnable getRssDownloadRunnable() {
+        return rssDownloadRunnable;
+    }
+
 
     public ListView getListViewWeakReference() {
         if (listViewWeakReference != null) {
@@ -37,6 +48,7 @@ public class RssTask {
         return null;
     }
 
+
     public ProgressBar getProgressBarWeakReference() {
         if (progressBarWeakReference != null) {
             return progressBarWeakReference.get();
@@ -44,12 +56,14 @@ public class RssTask {
         return null;
     }
 
+
     public HeadlineItemAdapter getHeadlineItemAdapterWeakReference() {
         if (headlineItemAdapterWeakReference != null) {
             return headlineItemAdapterWeakReference.get();
         }
         return null;
     }
+
 
     public ArrayList<HeadlineItem> getRssHeadlinesArrayList() {
         return rssHeadlinesArrayList;
@@ -59,11 +73,11 @@ public class RssTask {
         this.rssHeadlinesArrayList = rssHeadlinesArrayList;
     }
 
-    public void beginRssDownload() {
+    /*public void beginRssDownload() {
         Thread thread = new Thread(rssDownloadRunnable);
         executingThread = thread;
         thread.start();
-    }
+    }*/
 
     public void handleDownloadState(int state) {
         RssHeadlinesManager manager = RssHeadlinesManager.getInstance();

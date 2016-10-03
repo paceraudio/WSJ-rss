@@ -21,6 +21,11 @@ public class Constants {
     public static final int LIFESTYLE = 5;
 
     public static final String OPINION_URL = "http://www.wsj.com/xml/rss/3_7041.xml";
+    public static final String WORLD_NEWS_URL = "http://www.wsj.com/xml/rss/3_7085.xml";
+    public static final String U_S_BUSINESS_URL = "http://www.wsj.com/xml/rss/3_7014.xml";
+    public static final String MARKET_NEWS_URL = "http://www.wsj.com/xml/rss/3_7031.xml";
+    public static final String TECHNOLOGY_URL = "http://www.wsj.com/xml/rss/3_7455.xml";
+    public static final String LIFESTYLE_URL = "http://www.wsj.com/xml/rss/3_7201.xml";
 
     /*Opinion
     World News

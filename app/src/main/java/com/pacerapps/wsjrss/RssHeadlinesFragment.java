@@ -80,8 +80,10 @@ public class RssHeadlinesFragment extends Fragment implements AdapterView.OnItem
 
 
     public void downloadHeadlines() {
+        headlineItemAdapter.clearAdapter();
         RssHeadlinesManager rssHeadlinesManager = RssHeadlinesManager.getInstance();
         rssHeadlinesManager.downloadRssHeadlines(downloadingProgressBar, headlineItemAdapter);
+
     }
 
     private void populateListViewWithSavedContents() {

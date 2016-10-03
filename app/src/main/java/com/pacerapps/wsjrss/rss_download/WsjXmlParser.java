@@ -10,7 +10,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import static com.pacerapps.wsjrss.util.Constants.LIFESTYLE;
+import static com.pacerapps.wsjrss.util.Constants.MARKETS_NEWS;
+import static com.pacerapps.wsjrss.util.Constants.OPINION;
 import static com.pacerapps.wsjrss.util.Constants.TAG;
+import static com.pacerapps.wsjrss.util.Constants.TECHNOLOGY;
+import static com.pacerapps.wsjrss.util.Constants.U_S_BUSINESS;
+import static com.pacerapps.wsjrss.util.Constants.WORLD_NEWS;
 
 /**
  * Created by jeffwconaway on 10/2/16.
@@ -38,7 +44,7 @@ public class WsjXmlParser {
                 continue;
             }
             String name = parser.getName();
-            Log.d(TAG, "readFeed: xml name: " + name);
+            //Log.d(TAG, "readFeed: xml name: " + name);
             // Starts by looking for the channel tag
             if (name.equals("channel")) {
                 headlineItems = readChannel(parser, itemType);
@@ -54,12 +60,16 @@ public class WsjXmlParser {
         ArrayList<HeadlineItem> headlineItems = new ArrayList<>();
 
         parser.require(XmlPullParser.START_TAG, nameSpace, "channel");
+
+        // insert a Headline item to show the category of the following articles
+        headlineItems.add(insertHeadlineCategory(itemType));
+
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
             String name = parser.getName();
-            Log.d(TAG, "readFeed: xml name: " + name);
+            //Log.d(TAG, "readFeed: xml name: " + name);
             // Starts by looking for the item tag
             if (name.equals("item")) {
                 headlineItems.add(readItem(parser, itemType));
@@ -75,7 +85,7 @@ public class WsjXmlParser {
         String title = null;
         //String summary = null;
         //String link = null;
-        HeadlineItem headlineItem = new HeadlineItem();
+        HeadlineItem headlineItem = new HeadlineItem(true);
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
@@ -123,5 +133,32 @@ public class WsjXmlParser {
                     break;
             }
         }
+    }
+
+    private HeadlineItem insertHeadlineCategory(int headlineType) {
+        String type = "";
+        switch (headlineType) {
+            case OPINION:
+                type = "Opinion";
+                break;
+            case WORLD_NEWS:
+                type = "World News";
+                break;
+            case U_S_BUSINESS:
+                type = "U.S. Business";
+                break;
+            case MARKETS_NEWS:
+                type = "Market News";
+                break;
+            case TECHNOLOGY:
+                type = "Technology: What's News";
+                break;
+            case LIFESTYLE:
+                type = "Lifestyle";
+                break;
+        }
+        HeadlineItem headlineItem = new HeadlineItem(false);
+        headlineItem.setHeadline(type);
+        return headlineItem;
     }
 }
