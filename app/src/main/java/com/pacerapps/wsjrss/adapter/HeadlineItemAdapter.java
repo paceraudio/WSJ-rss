@@ -2,7 +2,6 @@ package com.pacerapps.wsjrss.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +14,17 @@ import com.pacerapps.wsjrss.rss_download.HeadlineItem;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static com.pacerapps.wsjrss.util.Constants.TAG;
-
 /**
  * Created by jeffwconaway on 10/2/16.
  */
 
 public class HeadlineItemAdapter extends BaseAdapter {
 
-    ArrayList<HeadlineItem> headlineItems;
-    Context context;
+    private static final int CATEGORY_TEXT_SIZE = 24;
+    private static final int HEADLINE_TEXT_SIZE = 16;
+    private static final int ZERO = 0;
+    private ArrayList<HeadlineItem> headlineItems;
+    private Context context;
 
     /*This is used to track categories (Opinion, U.S. News, etc) that have already been downloaded
      * and added to the ListView.  The key will be the category type, and the value will be the
@@ -33,6 +33,7 @@ public class HeadlineItemAdapter extends BaseAdapter {
      * we mirror the order of the different feeds online, and always have a consistent category
      * order in our ListView*/
     HashMap<Integer, Integer> orderingHashMap;
+
 
     public HeadlineItemAdapter(Context context) {
         this.context = context;
@@ -61,7 +62,7 @@ public class HeadlineItemAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return ZERO;
     }
 
     @Override
@@ -75,10 +76,10 @@ public class HeadlineItemAdapter extends BaseAdapter {
         TextView headlineTextView = (TextView) convertView.findViewById(R.id.text_view_rss_item);
         headlineTextView.setText(headlineItem.getHeadline());
         if (!headlineItem.isHeadline()) {
-            headlineTextView.setTextSize(24);
+            headlineTextView.setTextSize(CATEGORY_TEXT_SIZE);
             headlineTextView.setTypeface(Typeface.DEFAULT, Typeface.BOLD_ITALIC);
         } else {
-            headlineTextView.setTextSize(16);
+            headlineTextView.setTextSize(HEADLINE_TEXT_SIZE);
             headlineTextView.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
         }
 
@@ -92,13 +93,13 @@ public class HeadlineItemAdapter extends BaseAdapter {
     }
 
     public synchronized void addItemsToAdapter(ArrayList<HeadlineItem> items) {
-        int category = items.get(0).getCategory();
+        int category = items.get(ZERO).getCategory();
         int insertionIndex = findInsertionIndex(category);
 
         /*safety - if something goes wrong, insert headlines at beginning of list.  The order of the
         categories will be lost, but we won't crash*/
         if (insertionIndex > headlineItems.size()) {
-            insertionIndex = 0;
+            insertionIndex = ZERO;
         }
 
         headlineItems.addAll(insertionIndex, items);
@@ -107,9 +108,9 @@ public class HeadlineItemAdapter extends BaseAdapter {
     }
 
     private synchronized int findInsertionIndex(int category) {
-        int insertionIndex = 0;
+        int insertionIndex = ZERO;
 
-        if (!orderingHashMap.isEmpty() && category != 0) {
+        if (!orderingHashMap.isEmpty() && category != ZERO) {
 
             for (int i : orderingHashMap.keySet()) {
 

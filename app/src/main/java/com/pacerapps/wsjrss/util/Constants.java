@@ -11,7 +11,6 @@ public class Constants {
     public static final int RSS_DOWNLOAD_FAILED = -1;
     public static final int RSS_DOWNLOAD_STARTED = 1;
     public static final int RSS_DOWNLOAD_COMPLETE = 2;
-    public static final int RSS_ASK_COMPLETE = 3;
 
     public static final int OPINION = 0;
     public static final int WORLD_NEWS = 1;

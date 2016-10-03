@@ -3,4 +3,5 @@
     <string name="action_settings">Settings</string>
     <string name="refreshing_feeds">Refreshing RSS feeds...</string>
     <string name="network_unavailable">Network unavailable, please check wifi</string>
+    <string name="download_error">Something went wrong...</string>
 </resources>

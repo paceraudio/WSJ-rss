@@ -19,17 +19,17 @@ import java.util.ArrayList;
 
     private WeakReference<ProgressBar> progressBarWeakReference;
     private WeakReference<HeadlineItemAdapter> headlineItemAdapterWeakReference;
-    private int headlineType;
+    private int headlineCategory;
 
-    RssTask(ProgressBar progressBar, HeadlineItemAdapter adapter, int headlineType) {
+    RssTask(ProgressBar progressBar, HeadlineItemAdapter adapter, int headlineCategory) {
         rssDownloadRunnable = new RssDownloadRunnable(this);
         progressBarWeakReference = new WeakReference<>(progressBar);
         headlineItemAdapterWeakReference = new WeakReference<>(adapter);
-        this.headlineType = headlineType;
+        this.headlineCategory = headlineCategory;
     }
 
-    int getHeadlineType() {
-        return headlineType;
+    int getHeadlineCategory() {
+        return headlineCategory;
     }
 
     RssDownloadRunnable getRssDownloadRunnable() {

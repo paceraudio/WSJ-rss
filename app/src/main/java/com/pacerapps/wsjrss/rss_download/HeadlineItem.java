@@ -11,16 +11,15 @@ import android.os.Parcelable;
 public class HeadlineItem implements Parcelable {
 
     private static final String HEADLINE_TYPE_KEY = "category";
-    private static final String HEADLINE_ORDER_KEY = "headlineOrder";
     private static final String HEADLINE_KEY = "headline";
+
     private int category;
-    private int headlineOrder;
     private String headline;
 
     // value for separating category items from headlines
     private boolean isHeadline;
 
-    public HeadlineItem(boolean isHeadline) {
+    HeadlineItem(boolean isHeadline) {
         this.isHeadline = isHeadline;
     }
 
@@ -32,23 +31,15 @@ public class HeadlineItem implements Parcelable {
         return category;
     }
 
-    public void setCategory(int category) {
+    void setCategory(int category) {
         this.category = category;
-    }
-
-    public int getHeadlineOrder() {
-        return headlineOrder;
-    }
-
-    public void setHeadlineOrder(int headlineOrder) {
-        this.headlineOrder = headlineOrder;
     }
 
     public String getHeadline() {
         return headline;
     }
 
-    public void setHeadline(String headline) {
+    void setHeadline(String headline) {
         this.headline = headline;
     }
 
@@ -61,7 +52,6 @@ public class HeadlineItem implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         Bundle bundle = new Bundle();
         bundle.putInt(HEADLINE_TYPE_KEY, category);
-        bundle.putInt(HEADLINE_ORDER_KEY, headlineOrder);
         bundle.putString(HEADLINE_KEY, headline);
     }
 
@@ -81,7 +71,6 @@ public class HeadlineItem implements Parcelable {
     private HeadlineItem(Parcel in) {
         Bundle bundle = in.readBundle(getClass().getClassLoader());
         category = bundle.getInt(HEADLINE_TYPE_KEY);
-        headlineOrder = bundle.getInt(HEADLINE_ORDER_KEY);
         headline = bundle.getString(HEADLINE_KEY);
     }
 

@@ -4,9 +4,11 @@ package com.pacerapps.wsjrss.rss_download;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.pacerapps.wsjrss.R;
 import com.pacerapps.wsjrss.adapter.HeadlineItemAdapter;
 
 import java.util.concurrent.BlockingQueue;
@@ -18,10 +20,12 @@ import static com.pacerapps.wsjrss.util.Constants.LIFESTYLE;
 import static com.pacerapps.wsjrss.util.Constants.MARKETS_NEWS;
 import static com.pacerapps.wsjrss.util.Constants.OPINION;
 import static com.pacerapps.wsjrss.util.Constants.RSS_DOWNLOAD_COMPLETE;
+import static com.pacerapps.wsjrss.util.Constants.RSS_DOWNLOAD_FAILED;
 import static com.pacerapps.wsjrss.util.Constants.RSS_DOWNLOAD_STARTED;
 import static com.pacerapps.wsjrss.util.Constants.TECHNOLOGY;
 import static com.pacerapps.wsjrss.util.Constants.U_S_BUSINESS;
 import static com.pacerapps.wsjrss.util.Constants.WORLD_NEWS;
+
 
 /**
  * Created by jeffwconaway on 10/1/16.
@@ -29,7 +33,7 @@ import static com.pacerapps.wsjrss.util.Constants.WORLD_NEWS;
 
 public class RssHeadlinesManager {
 
-    Handler uiHandler;
+    private Handler uiHandler;
 
     private static RssHeadlinesManager instance;
 
@@ -37,9 +41,9 @@ public class RssHeadlinesManager {
     private static final int KEEP_THREAD_ALIVE = 2;
     private static final TimeUnit KEEP_THREAD_ALIVE_UNIT = TimeUnit.SECONDS;
     private static final int CORES = Runtime.getRuntime().availableProcessors();
-    ThreadPoolExecutor executor;
+    private ThreadPoolExecutor executor;
 
-    int[] headlineTypesArray = {OPINION, WORLD_NEWS, U_S_BUSINESS, MARKETS_NEWS, TECHNOLOGY, LIFESTYLE};
+    private int[] headlineTypesArray = {OPINION, WORLD_NEWS, U_S_BUSINESS, MARKETS_NEWS, TECHNOLOGY, LIFESTYLE};
 
 
     private RssHeadlinesManager() {
@@ -49,6 +53,7 @@ public class RssHeadlinesManager {
     }
 
     public static RssHeadlinesManager getInstance() {
+
         if (instance == null) {
             instance = new RssHeadlinesManager();
         }
@@ -86,21 +91,27 @@ public class RssHeadlinesManager {
                             progressBar.setVisibility(View.INVISIBLE);
                         }
                         break;
+
+                    case RSS_DOWNLOAD_FAILED:
+                        // using the progress bar because it's the only view we have from the layout here
+                        Snackbar.make(progressBar, R.string.download_error, Snackbar.LENGTH_LONG).show();
+                        break;
+
                 }
             }
         };
     }
 
     public RssTask downloadRssHeadlines(ProgressBar progressBar, HeadlineItemAdapter adapter) {
-        for (int type : headlineTypesArray) {
-            RssTask rssTask = new RssTask(progressBar, adapter, type);
+        for (int category : headlineTypesArray) {
+            RssTask rssTask = new RssTask(progressBar, adapter, category);
             executor.execute(rssTask.getRssDownloadRunnable());
         }
 
         return null;
     }
 
-    public void handleDownloadState(RssTask rssTask, int state) {
+    void handleDownloadState(RssTask rssTask, int state) {
 
         switch (state) {
             case RSS_DOWNLOAD_STARTED:
@@ -113,6 +124,12 @@ public class RssHeadlinesManager {
                 Message completedMessage = uiHandler.obtainMessage(state, rssTask);
                 completedMessage.setTarget(uiHandler);
                 completedMessage.sendToTarget();
+                break;
+
+            case RSS_DOWNLOAD_FAILED:
+                Message failedMessage = uiHandler.obtainMessage(state, rssTask);
+                failedMessage.setTarget(uiHandler);
+                failedMessage.sendToTarget();
                 break;
         }
     }

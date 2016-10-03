@@ -5,15 +5,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import com.pacerapps.wsjrss.util.ConnectivityUtils;
-
-import static com.pacerapps.wsjrss.util.Constants.TAG;
 
 public class RssActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -28,13 +22,15 @@ public class RssActivity extends AppCompatActivity implements View.OnClickListen
         setSupportActionBar(toolbar);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(this);
+
+        if (fab != null) {
+            fab.setOnClickListener(this);
+        }
+
     }
 
     @Override
     public void onClick(View v) {
-        Log.d(TAG, "onClick: FAB clicked!!!");
-
         RssHeadlinesFragment fragment = (RssHeadlinesFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_rss_headlines);
 
         if (fragment != null && fragment.isVisible()) {

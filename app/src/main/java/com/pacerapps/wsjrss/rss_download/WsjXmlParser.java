@@ -20,11 +20,21 @@ import static com.pacerapps.wsjrss.util.Constants.WORLD_NEWS;
  * Created by jeffwconaway on 10/2/16.
  */
 
-public class WsjXmlParser {
+class WsjXmlParser {
 
+    private static final String RSS = "rss";
+    private static final String CHANNEL = "channel";
+    private static final String ITEM = "item";
+    private static final String TITLE = "title";
+    private static final String OPINION_STR = "Opinion";
+    private static final String WORLD_NEWS_STR = "World News";
+    private static final String U_S_BUSINESS_STR = "U.S. Business";
+    private static final String MARKET_NEWS_STR = "Market News";
+    private static final String TECHNOLOGY_WHAT_S_NEWS_STR = "Technology: What's News";
+    private static final String LIFESTYLE_STR = "Lifestyle";
     private static String nameSpace = null;
 
-    public ArrayList<HeadlineItem> parseRssXml(InputStream inputStream, int itemType) throws XmlPullParserException, IOException {
+    ArrayList<HeadlineItem> parseRssXml(InputStream inputStream, int itemType) throws XmlPullParserException, IOException {
 
         XmlPullParser parser = Xml.newPullParser();
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -36,14 +46,14 @@ public class WsjXmlParser {
     private ArrayList<HeadlineItem> readFeed(XmlPullParser parser, int itemType) throws XmlPullParserException, IOException {
         ArrayList<HeadlineItem> headlineItems = new ArrayList<>();
 
-        parser.require(XmlPullParser.START_TAG, nameSpace, "rss");
+        parser.require(XmlPullParser.START_TAG, nameSpace, RSS);
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
             String name = parser.getName();
             // Starts by looking for the channel tag
-            if (name.equals("channel")) {
+            if (name.equals(CHANNEL)) {
                 headlineItems = readChannel(parser, itemType);
             } else {
                 skipElement(parser);
@@ -56,7 +66,7 @@ public class WsjXmlParser {
     private ArrayList<HeadlineItem> readChannel(XmlPullParser parser, int itemType) throws XmlPullParserException, IOException {
         ArrayList<HeadlineItem> headlineItems = new ArrayList<>();
 
-        parser.require(XmlPullParser.START_TAG, nameSpace, "channel");
+        parser.require(XmlPullParser.START_TAG, nameSpace, CHANNEL);
 
         // insert a Headline item to show the category of the following articles
         headlineItems.add(insertHeadlineCategory(itemType));
@@ -67,7 +77,7 @@ public class WsjXmlParser {
             }
             String name = parser.getName();
             // Starts by looking for the item tag
-            if (name.equals("item")) {
+            if (name.equals(ITEM)) {
                 headlineItems.add(readItem(parser, itemType));
             } else {
                 skipElement(parser);
@@ -77,7 +87,7 @@ public class WsjXmlParser {
     }
 
     private HeadlineItem readItem(XmlPullParser parser, int itemType) throws XmlPullParserException, IOException {
-        parser.require(XmlPullParser.START_TAG, nameSpace, "item");
+        parser.require(XmlPullParser.START_TAG, nameSpace, ITEM);
         String title = null;
         HeadlineItem headlineItem = new HeadlineItem(true);
         while (parser.next() != XmlPullParser.END_TAG) {
@@ -85,7 +95,7 @@ public class WsjXmlParser {
                 continue;
             }
             String name = parser.getName();
-            if (name.equals("title")) {
+            if (name.equals(TITLE)) {
                 title = readTitle(parser);
                 headlineItem.setHeadline(title);
             } else {
@@ -97,9 +107,9 @@ public class WsjXmlParser {
     }
 
     private String readTitle(XmlPullParser parser) throws XmlPullParserException, IOException {
-        parser.require(XmlPullParser.START_TAG, nameSpace, "title");
+        parser.require(XmlPullParser.START_TAG, nameSpace, TITLE);
         String title = readText(parser);
-        parser.require(XmlPullParser.END_TAG, nameSpace, "title");
+        parser.require(XmlPullParser.END_TAG, nameSpace, TITLE);
         return title;
     }
 
@@ -133,22 +143,22 @@ public class WsjXmlParser {
         String category = "";
         switch (headlineType) {
             case OPINION:
-                category = "Opinion";
+                category = OPINION_STR;
                 break;
             case WORLD_NEWS:
-                category = "World News";
+                category = WORLD_NEWS_STR;
                 break;
             case U_S_BUSINESS:
-                category = "U.S. Business";
+                category = U_S_BUSINESS_STR;
                 break;
             case MARKETS_NEWS:
-                category = "Market News";
+                category = MARKET_NEWS_STR;
                 break;
             case TECHNOLOGY:
-                category = "Technology: What's News";
+                category = TECHNOLOGY_WHAT_S_NEWS_STR;
                 break;
             case LIFESTYLE:
-                category = "Lifestyle";
+                category = LIFESTYLE_STR;
                 break;
         }
         HeadlineItem headlineItem = new HeadlineItem(false);

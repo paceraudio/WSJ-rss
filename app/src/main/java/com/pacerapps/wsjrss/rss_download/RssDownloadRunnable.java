@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import static com.pacerapps.wsjrss.util.Constants.RSS_DOWNLOAD_COMPLETE;
+import static com.pacerapps.wsjrss.util.Constants.RSS_DOWNLOAD_FAILED;
 import static com.pacerapps.wsjrss.util.Constants.RSS_DOWNLOAD_STARTED;
 import static com.pacerapps.wsjrss.util.Constants.TAG;
 
@@ -23,6 +24,9 @@ import static com.pacerapps.wsjrss.util.Constants.TAG;
 
 public class RssDownloadRunnable implements Runnable {
 
+    public static final int TIMEOUT_MILLIS = 10000;
+    public static final int CONNECT_TIMEOUT_MILLIS = 15000;
+    public static final String GET = "GET";
     RssTask rssTask;
 
     public RssDownloadRunnable(RssTask rssTask) {
@@ -34,13 +38,15 @@ public class RssDownloadRunnable implements Runnable {
         rssTask.handleDownloadState(RSS_DOWNLOAD_STARTED);
 
         try {
-            ArrayList<HeadlineItem> headlineItems = downloadRssHeadlines(rssTask.getHeadlineType());
+            ArrayList<HeadlineItem> headlineItems = downloadRssHeadlines(rssTask.getHeadlineCategory());
             if (headlineItems != null) {
                 rssTask.setRssHeadlinesArrayList(headlineItems);
+                rssTask.handleDownloadState(RSS_DOWNLOAD_COMPLETE);
             }
-            rssTask.handleDownloadState(RSS_DOWNLOAD_COMPLETE);
+
         } catch (IOException e) {
             Log.e(TAG, "RssDownloadRunnable run: ", e);
+            rssTask.handleDownloadState(RSS_DOWNLOAD_FAILED);
         }
 
     }
@@ -52,13 +58,20 @@ public class RssDownloadRunnable implements Runnable {
         try {
             URL url = obtainUrlByType(headlineType);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setReadTimeout(10000);
-            connection.setConnectTimeout(15000);
-            connection.setRequestMethod("GET");
+            connection.setReadTimeout(TIMEOUT_MILLIS);
+            connection.setConnectTimeout(CONNECT_TIMEOUT_MILLIS);
+            connection.setRequestMethod(GET);
             connection.setDoInput(true);
             connection.connect();
             int response = connection.getResponseCode();
-            Log.d(TAG, "downloadRssHeadlines: response code: " + response);
+
+
+            if (response >= 400) {
+                rssTask.handleDownloadState(RSS_DOWNLOAD_FAILED);
+                Log.d(TAG, "downloadRssHeadlines: bad response code!!! " + response);
+                return null;
+            }
+
             inputStream = connection.getInputStream();
             WsjXmlParser parser = new WsjXmlParser();
 
@@ -67,6 +80,8 @@ public class RssDownloadRunnable implements Runnable {
 
             } catch (XmlPullParserException e) {
                 Log.e(TAG, "downloadRssHeadlines: ", e);
+                rssTask.handleDownloadState(RSS_DOWNLOAD_FAILED);
+                return null;
             }
 
         } finally {
