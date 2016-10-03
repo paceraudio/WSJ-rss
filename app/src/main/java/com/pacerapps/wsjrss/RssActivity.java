@@ -5,14 +5,19 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.pacerapps.wsjrss.util.ConnectivityUtils;
+
 import static com.pacerapps.wsjrss.util.Constants.TAG;
 
-public class RssActivity extends AppCompatActivity {
+public class RssActivity extends AppCompatActivity implements View.OnClickListener {
+
+    FloatingActionButton fab;
 
 
     @Override
@@ -22,23 +27,21 @@ public class RssActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "onClick: FAB clicked!!!");
-
-                RssHeadlinesFragment fragment = (RssHeadlinesFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_rss_headlines);
-                if (fragment != null && fragment.isVisible()) {
-
-                    fragment.downloadHeadlines();
-                    Snackbar.make(view, R.string.refreshing_feeds, Snackbar.LENGTH_SHORT)
-                            .setAction("Action", null).show();
-                }
-
-            }
-        });
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(this);
     }
+
+    @Override
+    public void onClick(View v) {
+        Log.d(TAG, "onClick: FAB clicked!!!");
+
+        RssHeadlinesFragment fragment = (RssHeadlinesFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_rss_headlines);
+
+        if (fragment != null && fragment.isVisible()) {
+            fragment.downloadHeadlines();
+        }
+    }
+
 
     @Override
     protected void onResume() {
@@ -66,5 +69,13 @@ public class RssActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showNoNetworkSnackbar() {
+        Snackbar.make(fab, R.string.network_unavailable, Snackbar.LENGTH_LONG).show();
+    }
+
+    public void showRefreshingRssSnackbar() {
+        Snackbar.make(fab, R.string.refreshing_feeds, Snackbar.LENGTH_SHORT).show();
     }
 }

@@ -1,5 +1,6 @@
 package com.pacerapps.wsjrss;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.widget.ProgressBar;
 import com.pacerapps.wsjrss.adapter.HeadlineItemAdapter;
 import com.pacerapps.wsjrss.rss_download.HeadlineItem;
 import com.pacerapps.wsjrss.rss_download.RssHeadlinesManager;
+import com.pacerapps.wsjrss.util.ConnectivityUtils;
 
 import java.util.ArrayList;
 
@@ -30,7 +32,7 @@ public class RssHeadlinesFragment extends Fragment implements AdapterView.OnItem
     private ProgressBar downloadingProgressBar;
 
     private ArrayList<HeadlineItem> savedAdapterContents;
-
+    private boolean stateSaved;
 
     public RssHeadlinesFragment() {
     }
@@ -42,7 +44,7 @@ public class RssHeadlinesFragment extends Fragment implements AdapterView.OnItem
 
         if (savedInstanceState != null) {
             savedAdapterContents = savedInstanceState.getParcelableArrayList(RSS_HEADLINES_KEY);
-
+            stateSaved = true;
         }
         return inflater.inflate(R.layout.fragment_rss, container, false);
     }
@@ -60,7 +62,12 @@ public class RssHeadlinesFragment extends Fragment implements AdapterView.OnItem
     @Override
     public void onResume() {
         super.onResume();
-        populateListViewWithSavedContents();
+        if (stateSaved) {
+            populateListViewWithSavedContents();
+        } else {
+            downloadHeadlines();
+        }
+
     }
 
     @Override
@@ -76,10 +83,27 @@ public class RssHeadlinesFragment extends Fragment implements AdapterView.OnItem
 
 
     public void downloadHeadlines() {
-        headlineItemAdapter.clearAdapter();
-        RssHeadlinesManager rssHeadlinesManager = RssHeadlinesManager.getInstance();
-        rssHeadlinesManager.downloadRssHeadlines(downloadingProgressBar, headlineItemAdapter);
+        ConnectivityUtils connectivityUtils = new ConnectivityUtils(getContext());
+        boolean connected = connectivityUtils.isNetworkAvailable();
 
+        if (connected) {
+            headlineItemAdapter.clearAdapter();
+            RssHeadlinesManager rssHeadlinesManager = RssHeadlinesManager.getInstance();
+            rssHeadlinesManager.downloadRssHeadlines(downloadingProgressBar, headlineItemAdapter);
+        }
+        showAppropriateSnackbar(connected);
+    }
+
+    public void showAppropriateSnackbar(boolean connected) {
+        Activity activity = getActivity();
+
+        if (activity instanceof RssActivity) {
+            if (connected) {
+                ((RssActivity) activity).showRefreshingRssSnackbar();
+            } else {
+                ((RssActivity) activity).showNoNetworkSnackbar();
+            }
+        }
     }
 
     private void populateListViewWithSavedContents() {

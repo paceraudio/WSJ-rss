@@ -92,7 +92,7 @@ public class WsjXmlParser {
                 skipElement(parser);
             }
         }
-        headlineItem.setHeadlineType(itemType);
+        headlineItem.setCategory(itemType);
         return headlineItem;
     }
 
@@ -130,29 +130,30 @@ public class WsjXmlParser {
     }
 
     private HeadlineItem insertHeadlineCategory(int headlineType) {
-        String type = "";
+        String category = "";
         switch (headlineType) {
             case OPINION:
-                type = "Opinion";
+                category = "Opinion";
                 break;
             case WORLD_NEWS:
-                type = "World News";
+                category = "World News";
                 break;
             case U_S_BUSINESS:
-                type = "U.S. Business";
+                category = "U.S. Business";
                 break;
             case MARKETS_NEWS:
-                type = "Market News";
+                category = "Market News";
                 break;
             case TECHNOLOGY:
-                type = "Technology: What's News";
+                category = "Technology: What's News";
                 break;
             case LIFESTYLE:
-                type = "Lifestyle";
+                category = "Lifestyle";
                 break;
         }
         HeadlineItem headlineItem = new HeadlineItem(false);
-        headlineItem.setHeadline(type);
+        headlineItem.setHeadline(category);
+        headlineItem.setCategory(headlineType);
         return headlineItem;
     }
 }

@@ -2,6 +2,7 @@ package com.pacerapps.wsjrss.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,9 @@ import com.pacerapps.wsjrss.R;
 import com.pacerapps.wsjrss.rss_download.HeadlineItem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import static com.pacerapps.wsjrss.util.Constants.TAG;
 
 /**
  * Created by jeffwconaway on 10/2/16.
@@ -22,9 +26,18 @@ public class HeadlineItemAdapter extends BaseAdapter {
     ArrayList<HeadlineItem> headlineItems;
     Context context;
 
+    /*This is used to track categories (Opinion, U.S. News, etc) that have already been downloaded
+     * and added to the ListView.  The key will be the category type, and the value will be the
+     * number of headlines (plus the category "header") that the category holds.  We can track
+     * where the category of headlines should be inserted into the headlineItems ArrayList so that
+     * we mirror the order of the different feeds online, and always have a consistent category
+     * order in our ListView*/
+    HashMap<Integer, Integer> orderingHashMap;
+
     public HeadlineItemAdapter(Context context) {
         this.context = context;
         headlineItems = new ArrayList<>();
+        orderingHashMap = new HashMap<>();
     }
 
     public ArrayList<HeadlineItem> getHeadlineItems() {
@@ -33,6 +46,7 @@ public class HeadlineItemAdapter extends BaseAdapter {
 
     public void setHeadlineItems(ArrayList<HeadlineItem> headlineItems) {
         this.headlineItems = headlineItems;
+
     }
 
     @Override
@@ -73,11 +87,55 @@ public class HeadlineItemAdapter extends BaseAdapter {
 
     public synchronized void clearAdapter() {
         headlineItems.clear();
+        clearOrderingHashMap();
         notifyDataSetChanged();
     }
 
     public synchronized void addItemsToAdapter(ArrayList<HeadlineItem> items) {
-        headlineItems.addAll(items);
+        int category = items.get(0).getCategory();
+        int insertionIndex = findInsertionIndex(category);
+
+        /*safety - if something goes wrong, insert headlines at beginning of list.  The order of the
+        categories will be lost, but we won't crash*/
+        if (insertionIndex > headlineItems.size()) {
+            insertionIndex = 0;
+        }
+
+        headlineItems.addAll(insertionIndex, items);
+        updateOrderingHashMap(category, items.size());
         notifyDataSetChanged();
+    }
+
+    private synchronized int findInsertionIndex(int category) {
+        int lesserCategory = -1; // outside of the bounds of the category range
+        int insertionIndex = 0;
+        //int totalSize = 0;
+
+        if (!orderingHashMap.isEmpty() && category != 0) {
+
+            for (int i : orderingHashMap.keySet()) {
+
+                if (i < category) {
+                    insertionIndex += orderingHashMap.get(i);
+                    if (i > lesserCategory) {
+                        lesserCategory = i;
+                    }
+                }
+            }
+            //insertionIndex = totalSize;
+        }
+        Log.d(TAG, "findInsertionIndex: category to insert: " + category);
+        Log.d(TAG, "findInsertionIndex: preceding category: " + lesserCategory);
+        Log.d(TAG, "findInsertionIndex: insertion index: " + insertionIndex);
+
+        return insertionIndex;
+    }
+
+    private synchronized void updateOrderingHashMap(int category, int headlineSize) {
+        orderingHashMap.put(category, headlineSize);
+    }
+
+    private synchronized void clearOrderingHashMap() {
+        orderingHashMap.clear();
     }
 }

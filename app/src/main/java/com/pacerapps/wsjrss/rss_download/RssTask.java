@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * Created by jeffwconaway on 10/1/16.
  */
 
-public class RssTask {
+ class RssTask {
 
     private RssDownloadRunnable rssDownloadRunnable;
 
@@ -21,22 +21,22 @@ public class RssTask {
     private WeakReference<HeadlineItemAdapter> headlineItemAdapterWeakReference;
     private int headlineType;
 
-    public RssTask(ProgressBar progressBar, HeadlineItemAdapter adapter, int headlineType) {
+    RssTask(ProgressBar progressBar, HeadlineItemAdapter adapter, int headlineType) {
         rssDownloadRunnable = new RssDownloadRunnable(this);
         progressBarWeakReference = new WeakReference<>(progressBar);
         headlineItemAdapterWeakReference = new WeakReference<>(adapter);
         this.headlineType = headlineType;
     }
 
-    public int getHeadlineType() {
+    int getHeadlineType() {
         return headlineType;
     }
 
-    public RssDownloadRunnable getRssDownloadRunnable() {
+    RssDownloadRunnable getRssDownloadRunnable() {
         return rssDownloadRunnable;
     }
 
-    public ProgressBar getProgressBarWeakReference() {
+    ProgressBar getProgressBarWeakReference() {
         if (progressBarWeakReference != null) {
             return progressBarWeakReference.get();
         }
@@ -44,7 +44,7 @@ public class RssTask {
     }
 
 
-    public HeadlineItemAdapter getHeadlineItemAdapterWeakReference() {
+    HeadlineItemAdapter getHeadlineItemAdapterWeakReference() {
         if (headlineItemAdapterWeakReference != null) {
             return headlineItemAdapterWeakReference.get();
         }
@@ -52,15 +52,15 @@ public class RssTask {
     }
 
 
-    public ArrayList<HeadlineItem> getRssHeadlinesArrayList() {
+    ArrayList<HeadlineItem> getRssHeadlinesArrayList() {
         return rssHeadlinesArrayList;
     }
 
-    public void setRssHeadlinesArrayList(ArrayList<HeadlineItem> rssHeadlinesArrayList) {
+    void setRssHeadlinesArrayList(ArrayList<HeadlineItem> rssHeadlinesArrayList) {
         this.rssHeadlinesArrayList = rssHeadlinesArrayList;
     }
 
-    public void handleDownloadState(int state) {
+    void handleDownloadState(int state) {
         RssHeadlinesManager manager = RssHeadlinesManager.getInstance();
         manager.handleDownloadState(this, state);
     }
